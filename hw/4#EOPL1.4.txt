@@ -1,0 +1,13 @@
+Kevin Risden CM1328							3/22/10
+CSSE304
+HW #4
+
+EOPL 1.4 Derivation from List-of-Int to (-7 . (3 . (14 . ())))
+List-of-Int
+->(Int . List-of-Int)
+->(-7 . List-of-Int)
+->(-7 . (Int . List-of-Int))
+->(-7 . (3 . List-of-Int))
+->(-7 . (3 . (Int . List-of-Int)))
+->(-7 . (3 . (14 . List-of-Int)))
+->(-7 . (3 . (14 . ())))

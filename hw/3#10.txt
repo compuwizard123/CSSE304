@@ -1,0 +1,40 @@
+Kevin Risden CM1328
+CSSE304-02
+
+#10 (15 points). This part is not to be submitted to the PLC grading web site, but rather printed and submitted in class.
+First, include your code from Problem #9.
+(a) Do a big-theta analysis of your code. I.e., is it T(N), T(N2), T(N3), T(N log N), or what? Don’t just give an answer, but explain how you arrive at it. Be sure to take into account the run-time of the standard Scheme procedures that you use. For example, because we know how a list is represented internally, we know that the running time for length when called on a list of N items must be T(N).
+(b) What is the theoretical minimum big-theta running time for any code that produces the first N rows of Pascal’s triangle? How do you know?
+Note: For both parts of this problem, you may assume that simple arithmetic operations (like * and + ) are constant time operations, even though this is not strictly true.
+
+; #9
+(define fact
+    (lambda (n)
+      (if (eq? n 0)
+		1
+		(* n (fact (- n 1))))))
+(define binomial
+	(lambda (n k)
+		(/ (fact n) (* (fact k) (fact (- n k))))))
+(define create-row
+	(lambda (n k)
+		(if (eq? n k)
+			'(1)
+			(cons (binomial n k) (create-row n (+ k 1))))))
+(define pascal-triangle
+	(lambda (n)
+		(if (<= n -1)
+			'()
+			(cons (create-row n 0) (pascal-triangle (- n 1))))))
+			
+a)
+	N = number of rows
+	N/2 = avg number of items per row
+	N! = calculation of binomial for each item in row
+	Therefore the big-theta analysis is T(N^2*N!). This should be better because should not have to use factorial and calulate the binomial each time. However when trying to do the recursive addition of (n-1, k-1) and (n-1, k) I couldn't get it to work in the time i had. 
+	
+	
+b)
+	N = number of rows
+	N/2 = avg number of items per row
+	The theorectical minimum big-theta running time is T(N^2) since there are N rows and each row has N items. Therefore the code must at least loop through all N rows and all items in each row at approximately N/2.
