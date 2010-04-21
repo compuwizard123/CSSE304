@@ -77,9 +77,7 @@
 		(cond
 			[(symbol? datum)
 				(var-exp datum)]
-			[(or (number? datum) (string? datum) (boolean? datum) (vector? datum) (and (pair? datum) (or (not (list? datum)) (number? (car datum)) (vector? (car datum)) (string? (car datum)) (boolean? (car datum)))) (null? datum))
-				(lit-exp datum)]
-			[(pair? datum)
+			[(and (list? datum) (not (null? datum)))
 				(let ([first (car datum)])
 					(cond
 						[(eqv? first 'lambda)
@@ -130,15 +128,16 @@
 											(eopl:error 'parse-exp "Invalid named let syntax ~s\n~s" datum "Invalid variable/value list")]
 										[(null? (cdddr datum))
 											(eopl:error 'parse-exp "Invalid named let syntax ~s\n~s" datum "No body/bodies")]
-										[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (caddr datum)))
+										[(not (andmap (lambda (x) (and (list? x) (symbol? (car x)) (eq? (length x) 2))) (caddr datum)))
 											(eopl:error 'parse-exp "Invalid named let syntax ~s\n~s" datum "Invalid variable/value list")]
 										[else
 											(named-let-exp (cadr datum) (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (caddr datum)) (map parse-exp (cdddr datum)))])]
 								[else
 									(cond
-										[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))											(eopl:error 'parse-exp "Invalid let syntax ~s\n~s" datum "Invalid variable/value list")]
+										[(not (andmap (lambda (x) (and (list? x) (symbol? (car x)) (eq? (length x) 2))) (cadr datum)))											(eopl:error 'parse-exp "Invalid let syntax ~s\n~s" datum "Invalid variable/value list")]
 										[else
 											(let-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])])]
+
 						[(eqv? first 'let*)
 							(cond
 								[(null? (cdr datum))
@@ -147,7 +146,7 @@
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "No body/bodies")]
 								[(not (list? (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
-								[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))
+								[(not (andmap (lambda (x) (and (list? x) (symbol? (car x)) (eq? (length x) 2))) (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
 								[else
 									(let*-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])]
@@ -159,12 +158,14 @@
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "No body/bodies")]
 								[(not (list? (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
-								[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))
+								[(not (andmap (lambda (x) (and (list? x) (symbol? (car x)) (eq? (length x) 2))) (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
 								[else
 									(letrec-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])]
 						[else
 							(app-exp (parse-exp (car datum)) (map parse-exp (cdr datum)))]))]
+			[(or (pair? datum) (number? datum) (string? datum) (boolean? datum) (vector? datum) (null? datum) (list? datum))
+				(lit-exp datum)]
 			[else
 				(eopl:error 'parse-exp "Invalid concrete syntax ~s" datum)])))
 
