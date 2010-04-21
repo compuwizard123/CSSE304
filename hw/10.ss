@@ -132,12 +132,12 @@
 											(eopl:error 'parse-exp "Invalid named let syntax ~s\n~s" datum "No body/bodies")]
 										[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (caddr datum)))
 											(eopl:error 'parse-exp "Invalid named let syntax ~s\n~s" datum "Invalid variable/value list")]
-										[else ;; FIXME
+										[else
 											(named-let-exp (cadr datum) (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (caddr datum)) (map parse-exp (cdddr datum)))])]
 								[else
 									(cond
 										[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))											(eopl:error 'parse-exp "Invalid let syntax ~s\n~s" datum "Invalid variable/value list")]
-										[else ;; FIXME
+										[else
 											(let-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])])]
 						[(eqv? first 'let*)
 							(cond
@@ -149,7 +149,7 @@
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
 								[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
-								[else ;; FIXME
+								[else
 									(let*-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])]
 						[(eqv? first 'letrec)
 							(cond
@@ -161,7 +161,7 @@
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
 								[(not (andmap (lambda (x) (and (pair? x) (not (null? (cdr x))) (null? (cddr x)) (symbol? (car x)))) (cadr datum)))
 									(eopl:error 'parse-exp "Invalid ~s syntax ~s\n~s" first datum "Invalid variable/value list")]
-								[else ;; FIXME
+								[else
 									(letrec-exp (map (lambda (x) (assignment-exp (car x) (parse-exp (cadr x)))) (cadr datum)) (map parse-exp (cddr datum)))])]
 						[else
 							(app-exp (parse-exp (car datum)) (map parse-exp (cdr datum)))]))]
